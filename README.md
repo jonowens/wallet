@@ -1,5 +1,5 @@
 # The Only Crypto Wallet
-The following repository is to show the skills and understanding of creating multi-blockchain wallets using Python from the taught by the Rice University FinTech Bootcamp and 2U.[1]
+The following repository is to show the skills and understanding of creating a multi-blockchain wallet using Python from the lectures taught by the Rice University FinTech Bootcamp and 2U.[1]
 
 ---
 
