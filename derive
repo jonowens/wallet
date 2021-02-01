@@ -8,7 +8,7 @@
  */
 
 // Let's be strict about things.
-require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '\hd-wallet-derive\vendor\autoload.php';
 \strictmode\initializer::init();
 
 
