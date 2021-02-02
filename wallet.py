@@ -11,7 +11,6 @@ coins = {
     ETH: ''
 }
 
-
 # load .env environment variables
 load_dotenv()
 
@@ -39,8 +38,6 @@ def derive_wallets(mnemonic_string, coin, num_to_derive):
     keys = json.loads(output)
     return keys
 
-
-#for coin in coins:
-keys = derive_wallets(mnemonic, coins, 3)
-
-print(keys)
+# to generate multiple keys and fill coins object
+for coin in coins:
+    coins[coin] = derive_wallets(mnemonic, coin, 3)
