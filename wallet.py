@@ -79,6 +79,9 @@ def priv_key_to_account(coin, priv_key):
     if coin == BTCTEST:
         return PrivateKeyTestnet(priv_key)
 
+
+coins = generate_and_derive_wallets(coins, mnemonic, 3)
+
 '''
 def create_tx(coin, account, to, amount):
     """This will create the raw, unsigned transaction that contains all metadata 
@@ -92,8 +95,6 @@ def create_tx(coin, account, to, amount):
         A dictionary of values: to, from, value, gas, gasPrice, nonce and chainID
     """
 '''
-
-coins = generate_and_derive_wallets(coins, mnemonic, 3)
 
 coin = ETH
 account = priv_key_to_account(ETH, coins[ETH][0]['privkey'])
