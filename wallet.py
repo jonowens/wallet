@@ -5,10 +5,12 @@ import subprocess
 import json
 from eth_account import Account
 from bit import PrivateKeyTestnet
+from web3 import Web3
 
 
 # instantiate variables and objects
 # coins object to derive desired wallets
+mnemonic = 'na'
 coins = {
     BTCTEST: '',
     ETH: ''
@@ -19,6 +21,11 @@ load_dotenv()
 
 # set the mnemonic as an environment variable
 mnemonic = os.getenv('MNEMONIC')
+
+# test for mnemonic phrase
+if mnemonic == 'na':
+    print("Please check your .env file for your mnemonic phrase.  No mnemonic phrase found.")
+    quit()
 
 def derive_wallets(mnemonic_string, coin, num_to_derive):
     """Derives wallet keys based on a single mnemonic string
@@ -41,10 +48,20 @@ def derive_wallets(mnemonic_string, coin, num_to_derive):
     keys = json.loads(output)
     return keys
 
-# to generate multiple keys and fill coins object
-for coin in coins:
-    coins[coin] = derive_wallets(mnemonic, coin, 3)
-
+def generate_and_derive_wallets(coin_dict, mnemonic, num_keys):
+    """Generates and derives wallets
+    Args:
+        coin_dict (dictionary): Dictionary containing coins
+        mnemonic (str): Mnemonic string of phrases to use
+        num_keys (int): Number of child keys to create for each coin
+    Returns:
+        Dictionary of coins and keys
+    """
+    # to generate multiple keys and fill coins object
+    for coin in coin_dict:
+        # derive wallet with keys
+        coin_dict[coin] = derive_wallets(mnemonic, coin, num_keys)
+    return coin_dict
 
 def priv_key_to_account(coin, priv_key):
     """Will convert the private key string in a child key to an account object
@@ -62,5 +79,40 @@ def priv_key_to_account(coin, priv_key):
     if coin == BTCTEST:
         return PrivateKeyTestnet(priv_key)
 
-value = priv_key_to_account(BTCTEST, coins[BTCTEST][0]['privkey'])
-print(value)
+'''
+def create_tx(coin, account, to, amount):
+    """This will create the raw, unsigned transaction that contains all metadata 
+    needed to transact
+    Args:
+        coin (str): The coin type defined in constants.py
+        account (obj): The account object from priv_key_to_account()
+        to (str): The recipient address
+        amount (flt): The amount of the coin to send
+    Returns:
+        A dictionary of values: to, from, value, gas, gasPrice, nonce and chainID
+    """
+'''
+
+coins = generate_and_derive_wallets(coins, mnemonic, 3)
+
+coin = ETH
+account = priv_key_to_account(ETH, coins[ETH][0]['privkey'])
+to = '0xDcDb9Ea7c64654B9E2C1E4C8D9018Ec680D0f8Bd'
+amount = 9999999
+
+# create connection for Web3 communication
+connection = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
+
+# check the coin for ETH
+if coin == ETH:
+    # estimate gas price for transaction
+    print(coin)
+    print(account)
+    print(account.address)
+    print(to)
+    print(amount)
+    print(account.balance)
+
+    gasEstimate = connection.eth.estimateGas({"from": account.address, "to": to, "value": amount})
+print(f'GAS ESTIMATE:    {gasEstimate}!!!!!!!!!')
+
