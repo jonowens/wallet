@@ -7,10 +7,10 @@ import os
 from dotenv import load_dotenv
 import subprocess
 import json
-from eth_account import Account
 from bit import PrivateKeyTestnet
-from web3 import Web3
+from web3 import Web3, Account
 from bit.network import NetworkAPI
+from pprint import pprint
 
 # instantiate variables and objects
 # coins object to derive desired wallets
@@ -84,7 +84,10 @@ def priv_key_to_account(coin, priv_key):
         return Account.privateKeyToAccount(priv_key)
     # check the coin for BTCTEST
     if coin == BTCTEST:
-        return PrivateKeyTestnet(priv_key)
+         account = PrivateKeyTestnet(priv_key)
+         print(account)
+         print(account.address)
+         return account
 
 def create_tx(coin, account, to, amount):
     """This will create the raw, unsigned transaction that contains all metadata 
@@ -101,7 +104,7 @@ def create_tx(coin, account, to, amount):
     if coin == ETH:
         # estimate gas price for transaction
         gasEstimate = connection.eth.estimateGas({
-            "from": account.address,
+            "from": account,
             "to": to,
             "value": amount
         })
@@ -118,7 +121,7 @@ def create_tx(coin, account, to, amount):
         }
     # check the coin for BTCTEST
     if coin == BTCTEST:
-        return PrivateKeyTestnet.prepare_transaction(account.address, [(to, amount, BTC)])
+        return PrivateKeyTestnet.prepare_transaction(account.address, [(to.address, amount, BTC)])
 
 def send_tx(coin, account, to, amount):
     """This will call create_tx, sign the transaction, then send it to the designated network.
@@ -133,27 +136,18 @@ def send_tx(coin, account, to, amount):
     """
     # create raw transaction
     raw_tx = create_tx(coin, account, to, amount)
+    # sign the raw transaction
+    signed = account.sign_transaction(raw_tx)
 
     # check the coin for ETH
     if coin == ETH:
-        # sign the raw transaction
-        signed = account.sign_transaction(raw_tx)
         # send raw transaction    
         return connection.eth.sendRawTransaction(signed.rawTransaction)
 
     # check the coin for BTCTEST
     if coin == BTCTEST:
-        # sign the raw transaction
-        signed = account.sign_transaction(raw_tx)
         # send raw transaction    
         return NetworkAPI.broadcast_tx_testnet(signed)
 
-coins = generate_and_derive_wallets(coins, mnemonic, 3)
-
-coin = ETH
-account = priv_key_to_account(coin, coins[coin][0]['privkey'])
-send_to = '0xDcDb9Ea7c64654B9E2C1E4C8D9018Ec680D0f8Bd'
-amount = 2
-
-status = send_tx(coin, account, send_to, amount)
-print(status)
+wallets = generate_and_derive_wallets(coins, mnemonic, 3)
+pprint(wallets)
