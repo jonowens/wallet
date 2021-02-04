@@ -106,12 +106,14 @@ def create_tx(coin, account, to, amount):
         })
         # return necessary data for transaction
         return {
-            'from': account.address,
             'to': to,
+            'from': account.address,
             'value': amount,
-            'gasPrice': gasEstimate,
-            'nonce': connection.eth.getTransactionCount(account.address),
-            'chainID': connection.eth.chainId
+            'gas': gasEstimate,
+            'gasPrice': connection.eth.gasPrice,
+            'nonce': connection.eth.getTransactionCount(account.address)
+            # homework said to include chainID, but chainID cannot be used in transmission
+            # 'chainID': connection.eth.chainId
         }
     # check the coin for BTCTEST
     if coin == BTCTEST:
@@ -120,6 +122,7 @@ def create_tx(coin, account, to, amount):
 coins = generate_and_derive_wallets(coins, mnemonic, 3)
 
 coin = ETH
+account = priv_key_to_account(coin, coins[coin][0]['privkey'])
 send_to = '0xbfB60ca3E4a18baC3BA44630bD2449DCAB349b56'
 amount = 9999999
 
@@ -139,8 +142,6 @@ def send(coin, account, to, amount):
 # check the coin for ETH
 if coin == ETH:
     # create raw transaction
-    raw_tx = create_tx(coin, priv_key_to_account(coin, coins[coin][0]['privkey']), send_to, amount)
+    raw_tx = create_tx(coin, account, send_to, amount)
+    signed = account.sign_transaction(raw_tx)
 
-
-# check the coin for BTCTEST.
-if coin == BTCTEST:
