@@ -43,6 +43,8 @@ def derive_wallets(mnemonic_string, coin, num_to_derive):
     Returns:
         JSON object with path, address, private keys and public keys
     """
+    err = 'na'
+    p_status = 'na'
     # create command line to generate keys
     command = f'php derive -g --mnemonic="{mnemonic_string}" --coin={coin} --numderive={num_to_derive} --cols=address,index,path,privkey,pubkey,pubkeyhash,xprv,xpub --format=json'
     
@@ -50,6 +52,11 @@ def derive_wallets(mnemonic_string, coin, num_to_derive):
     p = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
     output, err = p.communicate()
     p_status = p.wait()
+
+    if err != 'na':
+        print("Error: ", err)
+    if p_status != 'na':
+        print("Status: ", p_status)
 
     # parse the output into a json object
     keys = json.loads(output)
@@ -81,7 +88,7 @@ def priv_key_to_account(coin, priv_key):
     """
     # check the coin for ETH
     if coin == ETH:
-        return Account.privateKeyToAccount(priv_key)
+        return Account().privateKeyToAccount(priv_key)
     # check the coin for BTCTEST
     if coin == BTCTEST:
          account = PrivateKeyTestnet(priv_key)
