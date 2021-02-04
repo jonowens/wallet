@@ -7,7 +7,6 @@ from eth_account import Account
 from bit import PrivateKeyTestnet
 from web3 import Web3
 
-
 # instantiate variables and objects
 # coins object to derive desired wallets
 mnemonic = 'na'
@@ -96,9 +95,9 @@ def create_tx(coin, account, to, amount):
     """
 '''
 
-coin = ETH
-account = priv_key_to_account(ETH, coins[ETH][0]['privkey'])
-to = '0xDcDb9Ea7c64654B9E2C1E4C8D9018Ec680D0f8Bd'
+coin = BTCTEST
+account = priv_key_to_account(coin, coins[coin][2]['privkey'])
+to = '0xbfB60ca3E4a18baC3BA44630bD2449DCAB349b56'
 amount = 9999999
 
 # create connection for Web3 communication
@@ -107,13 +106,21 @@ connection = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
 # check the coin for ETH
 if coin == ETH:
     # estimate gas price for transaction
-    print(coin)
-    print(account)
-    print(account.address)
-    print(to)
-    print(amount)
-    print(account.balance)
+    gasEstimate = connection.eth.estimateGas({
+        "from": account.address,
+        "to": to,
+        "value": amount
+    })
+    # return necessary data for transaction
+    returned_val = {
+        'from': account.address,
+        'to': to,
+        'value': amount,
+        'gasPrice': gasEstimate,
+        'nonce': connection.eth.getTransactionCount(account.address),
+        'chainID': connection.eth.chainId
+    }
+if coin == BTCTEST:
+    returned_val = PrivateKeyTestnet.prepare_transaction(account.address, [(to, amount, BTC)])
 
-    gasEstimate = connection.eth.estimateGas({"from": account.address, "to": to, "value": amount})
-print(f'GAS ESTIMATE:    {gasEstimate}!!!!!!!!!')
-
+print(returned_val)
