@@ -43,8 +43,8 @@ def derive_wallets(mnemonic_string, coin, num_to_derive):
     Returns:
         JSON object with path, address, private keys and public keys
     """
-    err = 'na'
-    p_status = 'na'
+    err = ''
+    p_status = ''
     # create command line to generate keys
     command = f'php derive -g --mnemonic="{mnemonic_string}" --coin={coin} --numderive={num_to_derive} --cols=address,index,path,privkey,pubkey,pubkeyhash,xprv,xpub --format=json'
     
@@ -53,9 +53,9 @@ def derive_wallets(mnemonic_string, coin, num_to_derive):
     output, err = p.communicate()
     p_status = p.wait()
 
-    if err != 'na':
+    if err == '':
         print("Error: ", err)
-    if p_status != 'na':
+    if p_status == 'na':
         print("Status: ", p_status)
 
     # parse the output into a json object
