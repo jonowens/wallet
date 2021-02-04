@@ -11,6 +11,7 @@ from bit import PrivateKeyTestnet
 from web3 import Web3, Account
 from bit.network import NetworkAPI
 from pprint import pprint
+from web3.middleware import geth_poa_middleware
 
 # instantiate variables and objects
 # coins object to derive desired wallets
@@ -25,6 +26,9 @@ load_dotenv()
 
 # create connection for Web3 communication
 connection = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
+
+# initialize web3 middleware
+connection.middleware_onion.inject(geth_poa_middleware, layer=0)
 
 # set the mnemonic as an environment variable
 mnemonic = os.getenv('MNEMONIC')
