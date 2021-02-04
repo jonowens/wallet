@@ -56,6 +56,8 @@ It is a race against time to beat the competition to market to build a portfolio
 
 - [1] https://rice.bootcampcontent.com/Rice-Coding-Bootcamp/rice-hou-fin-pt-09-2020-u-c/tree/master/hw/19-Blockchain-Python/Instructions
 
+- [2] https://rice.bootcampcontent.com/Rice-Coding-Bootcamp/rice-hou-fin-pt-09-2020-u-c/blob/master/class/19-Blockchain-Python/1/Activities/03-Ins_Sending_Txns/Solved/main.py
+
 ---
 
 ## Status

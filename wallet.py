@@ -1,3 +1,7 @@
+# Functions to derive wallets, create transactions and send transactions for ETH and BTCTEST.
+# Assistance writing the code came from source numbers 1 and 2 found in the README.md file.
+
+# import libraries
 from constants import *
 import os
 from dotenv import load_dotenv
@@ -109,16 +113,34 @@ def create_tx(coin, account, to, amount):
             'nonce': connection.eth.getTransactionCount(account.address),
             'chainID': connection.eth.chainId
         }
+    # check the coin for BTCTEST
     if coin == BTCTEST:
         return PrivateKeyTestnet.prepare_transaction(account.address, [(to, amount, BTC)])
 
 coins = generate_and_derive_wallets(coins, mnemonic, 3)
 
 coin = ETH
-send_from = priv_key_to_account(coin, coins[coin][0]['privkey'])
 send_to = '0xbfB60ca3E4a18baC3BA44630bD2449DCAB349b56'
 amount = 9999999
 
-raw_tx = create_tx(coin, send_from, send_to, amount)
+'''
+def send(coin, account, to, amount):
+    """This will call create_tx, sign the transaction, then send it to the designated network.
+    needed to transact
+    Args:
+        coin (str): The coin type defined in constants.py
+        account (obj): The account object from priv_key_to_account()
+        to (str): The recipient address
+        amount (flt): The amount of the coin to send
+    Returns:
+        Sent transaction status
+    """
+'''
+# check the coin for ETH
+if coin == ETH:
+    # create raw transaction
+    raw_tx = create_tx(coin, priv_key_to_account(coin, coins[coin][0]['privkey']), send_to, amount)
 
-print(raw_tx)
+
+# check the coin for BTCTEST.
+if coin == BTCTEST:
