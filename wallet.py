@@ -22,6 +22,9 @@ coins = {
 # load .env environment variables
 load_dotenv()
 
+# create connection for Web3 communication
+connection = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
+
 # set the mnemonic as an environment variable
 mnemonic = os.getenv('MNEMONIC')
 
@@ -93,9 +96,6 @@ def create_tx(coin, account, to, amount):
     Returns:
         A dictionary of values: to, from, value, gas, gasPrice, nonce and chainID
     """
-    # create connection for Web3 communication
-    connection = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
-
     # check the coin for ETH
     if coin == ETH:
         # estimate gas price for transaction
@@ -144,4 +144,4 @@ if coin == ETH:
     # create raw transaction
     raw_tx = create_tx(coin, account, send_to, amount)
     signed = account.sign_transaction(raw_tx)
-
+    status = connection.
