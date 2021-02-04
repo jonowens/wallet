@@ -78,10 +78,6 @@ def priv_key_to_account(coin, priv_key):
     if coin == BTCTEST:
         return PrivateKeyTestnet(priv_key)
 
-
-coins = generate_and_derive_wallets(coins, mnemonic, 3)
-
-'''
 def create_tx(coin, account, to, amount):
     """This will create the raw, unsigned transaction that contains all metadata 
     needed to transact
@@ -93,34 +89,36 @@ def create_tx(coin, account, to, amount):
     Returns:
         A dictionary of values: to, from, value, gas, gasPrice, nonce and chainID
     """
-'''
+    # create connection for Web3 communication
+    connection = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
 
-coin = BTCTEST
-account = priv_key_to_account(coin, coins[coin][2]['privkey'])
-to = '0xbfB60ca3E4a18baC3BA44630bD2449DCAB349b56'
+    # check the coin for ETH
+    if coin == ETH:
+        # estimate gas price for transaction
+        gasEstimate = connection.eth.estimateGas({
+            "from": account.address,
+            "to": to,
+            "value": amount
+        })
+        # return necessary data for transaction
+        return {
+            'from': account.address,
+            'to': to,
+            'value': amount,
+            'gasPrice': gasEstimate,
+            'nonce': connection.eth.getTransactionCount(account.address),
+            'chainID': connection.eth.chainId
+        }
+    if coin == BTCTEST:
+        return PrivateKeyTestnet.prepare_transaction(account.address, [(to, amount, BTC)])
+
+coins = generate_and_derive_wallets(coins, mnemonic, 3)
+
+coin = ETH
+send_from = priv_key_to_account(coin, coins[coin][0]['privkey'])
+send_to = '0xbfB60ca3E4a18baC3BA44630bD2449DCAB349b56'
 amount = 9999999
 
-# create connection for Web3 communication
-connection = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
+raw_tx = create_tx(coin, send_from, send_to, amount)
 
-# check the coin for ETH
-if coin == ETH:
-    # estimate gas price for transaction
-    gasEstimate = connection.eth.estimateGas({
-        "from": account.address,
-        "to": to,
-        "value": amount
-    })
-    # return necessary data for transaction
-    returned_val = {
-        'from': account.address,
-        'to': to,
-        'value': amount,
-        'gasPrice': gasEstimate,
-        'nonce': connection.eth.getTransactionCount(account.address),
-        'chainID': connection.eth.chainId
-    }
-if coin == BTCTEST:
-    returned_val = PrivateKeyTestnet.prepare_transaction(account.address, [(to, amount, BTC)])
-
-print(returned_val)
+print(raw_tx)
