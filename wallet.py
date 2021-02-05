@@ -115,7 +115,7 @@ def create_tx(coin, account, to, amount):
     if coin == ETH:
         # estimate gas price for transaction
         gasEstimate = connection.eth.estimateGas({
-            "from": account,
+            "from": account.address,
             "to": to,
             "value": amount
         })
