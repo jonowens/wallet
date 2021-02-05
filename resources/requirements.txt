@@ -168,6 +168,7 @@ pyrsistent==0.16.0
 PySocks @ file:///C:/ci/pysocks_1594394709107/work
 pytest==5.4.3
 python-dateutil==2.8.1
+python-dotenv==0.15.0
 python-jsonrpc-server @ file:///tmp/build/80754af9/python-jsonrpc-server_1594397536060/work
 python-language-server @ file:///C:/ci/python-language-server_1594152769556/work
 pytz==2020.1
